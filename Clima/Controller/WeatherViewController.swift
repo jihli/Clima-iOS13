@@ -19,6 +19,8 @@ class WeatherViewController: UIViewController,UITextFieldDelegate {
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var searchTextField: UITextField!
     
+    var weatherManager = WeatherManager()
+    
     //super.viewDidLoad()：先让父类做它必须做的初始化
     //searchTextField.delegate = self: 把 searchTextField 的代理设置为当前控制器,这样下面这些代理方法才会被触发：textFieldShouldReturn + textFieldShouldEndEditing + textFieldDidEndEditing
     override func viewDidLoad() {
@@ -55,6 +57,15 @@ class WeatherViewController: UIViewController,UITextFieldDelegate {
     // textFieldDidEndEditing对搜索框的内容 变成""
     func textFieldDidEndEditing(_ textField: UITextField) {
         // Use searchTextField.text to get the weather for that city
+        
+        // 如下if是尝试解包 如果不为空 才执行{}中
+        // 也就是weatherManager.fetchWeather(cityName:city)的内容
+        // 这个时候用户输入的text 以后会调用fetchWeather的逻辑(现在是把整体的url打印出来)
+        if let city = searchTextField.text {
+            weatherManager.fetchWeather(cityName:city)
+        }
+        
+        //最后把用户的输入框归零
         searchTextField.text = ""
     }
     
