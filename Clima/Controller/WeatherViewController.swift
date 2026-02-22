@@ -10,7 +10,7 @@ import UIKit
 
 //UIViewController：继承苹果的页面基类，才能拥有生命周期（viewDidLoad 等）和 UI 管理能力
 //UITextFieldDelegate：表示这个类要实现 文本框代理。代理用于接收文本框事件（比如按 Return、结束编辑、是否允许结束编辑等）
-class WeatherViewController: UIViewController,UITextFieldDelegate {
+class WeatherViewController: UIViewController,UITextFieldDelegate,WeatherManagerDelegate {
     // @IBOutlet：告诉 Xcode 这个属性可以在 Interface Builder（storyboard）里连线。不同的元素已经和这里的代码建立联系了
     //weak：弱引用，避免循环引用导致内存泄漏
     //var xxx: 类型!：UIImageView / UILabel / UITextField：控件类型。
@@ -25,6 +25,7 @@ class WeatherViewController: UIViewController,UITextFieldDelegate {
     //searchTextField.delegate = self: 把 searchTextField 的代理设置为当前控制器,这样下面这些代理方法才会被触发：textFieldShouldReturn + textFieldShouldEndEditing + textFieldDidEndEditing
     override func viewDidLoad() {
         super.viewDidLoad()
+        weatherManager.delegate = self
         searchTextField.delegate = self
     }
     
@@ -68,6 +69,11 @@ class WeatherViewController: UIViewController,UITextFieldDelegate {
         //最后把用户的输入框归零
         searchTextField.text = ""
     }
+    
+    func didUpdateWeather(weather: WeatherModel){
+        print(weather.temperature)
+    }
+    
     
 }
 
