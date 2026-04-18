@@ -70,10 +70,65 @@ class WeatherViewController: UIViewController,UITextFieldDelegate,WeatherManager
         searchTextField.text = ""
     }
     
-    func didUpdateWeather(weather: WeatherModel){
-        print(weather.temperature)
+    func didUpdateWeather(_ weatherManager:WeatherManager,weather: WeatherModel){
+        DispatchQueue.main.async{
+            self.temperatureLabel.text = weather.temperatureString
+            self.conditionImageView.image = UIImage(systemName:weather.conditionName)
+        }
+    }
+    
+    func didFailWithError(error: Error) {
+        print(error)
     }
     
     
 }
+
+
+
+//Note of 04182026
+// MARK: - 整体执行流程总结
+//
+// 一次完整搜索的大致流程如下：
+//
+// 1. 页面加载
+//    -> viewDidLoad()
+//    -> 设置两个代理：
+//       searchTextField.delegate = self
+//       weatherManager.delegate = self
+//
+// 2. 用户输入城市名
+//    -> 比如输入 "Beijing"
+//
+// 3. 用户触发搜索
+//    有两种方式：
+//    A. 点击按钮 -> searchPressed(_ sender: UIButton)
+//    B. 点击键盘 Return -> textFieldShouldReturn(_ textField: UITextField)
+//
+// 4. 两种方式最后都会执行：
+//    searchTextField.endEditing(true)
+//
+// 5. 结束编辑前先检查：
+//    -> textFieldShouldEndEditing(_ textField: UITextField)
+//    - 如果输入为空：return false，不继续
+//    - 如果输入不为空：return true，继续
+//
+// 6. 结束编辑后执行：
+//    -> textFieldDidEndEditing(_ textField: UITextField)
+//    - 取出输入内容
+//    - 调用 weatherManager.fetchWeather(cityName: city)
+//    - 清空输入框
+//
+// 7. WeatherManager 发起网络请求
+//    - 请求天气 API
+//    - 解析返回数据
+//
+// 8. 请求成功时：
+//    -> didUpdateWeather(_:weather:)
+//    - 当前代码里打印 temperature
+//    - 实际上应该在这里更新页面 UI
+//
+// 9. 请求失败时：
+//    -> didFailWithError(error:)
+//    - 打印错误信息
 
